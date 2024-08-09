@@ -24,13 +24,11 @@ public class BankAccountService {
         BankAccount account = new BankAccount();
         account.setOwnerName(ownerName);
         account.setBalance(initialBalance);
-        // Generate account number or handle it based on your requirements
         account.setAccountNumber(generateAccountNumber());
         return accountRepository.save(account);
     }
 
     private String generateAccountNumber() {
-        // Implement your logic to generate unique account numbers
         return UUID.randomUUID().toString();
     }
 

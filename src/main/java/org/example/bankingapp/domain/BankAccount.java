@@ -29,5 +29,4 @@ public class BankAccount {
         this.balance = this.balance.subtract(amount);
     }
 
-    // getters and setters
 }

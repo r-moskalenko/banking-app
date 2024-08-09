@@ -31,8 +31,6 @@ public class BankAccountController {
 
     @GetMapping("/{accountNumber}")
     public ResponseEntity<BankAccount> getAccountDetails(@PathVariable String accountNumber) {
-        // Implement logic to fetch account details by account number
-        // You may need to add a method in service/repository to fetch by account number
         BankAccount account = accountService.getAccountByNumber(accountNumber);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
