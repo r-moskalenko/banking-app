@@ -1,12 +1,14 @@
 package org.example.bankingapp.api;
 
 import org.example.bankingapp.domain.BankAccount;
+import org.example.bankingapp.dto.TransferDto;
 import org.example.bankingapp.service.BankAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,5 +53,11 @@ public class BankAccountController {
     public ResponseEntity<String> withdraw(@PathVariable Long accountId, @RequestParam BigDecimal amount) {
         accountService.withdraw(accountId, amount);
         return ResponseEntity.ok("Withdrawal successful");
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transfer(@RequestBody TransferDto transferDetails) {
+        accountService.transfer(transferDetails);
+        return ResponseEntity.ok("Transfer successful");
     }
 }

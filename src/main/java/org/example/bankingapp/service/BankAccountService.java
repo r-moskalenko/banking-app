@@ -1,6 +1,7 @@
 package org.example.bankingapp.service;
 
 import org.example.bankingapp.domain.BankAccount;
+import org.example.bankingapp.dto.TransferDto;
 import org.example.bankingapp.repository.BankAccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +49,21 @@ public class BankAccountService {
 
     public BankAccount getAccountByNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);
+    }
+
+    public void transfer(TransferDto transferDto) {
+        Long fromAccountId = transferDto.getFromAccountId();
+        Long toAccountId = transferDto.getToAccountId();
+        BigDecimal amount = transferDto.getAmount();
+        BankAccount fromAccount = accountRepository.findById(fromAccountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        BankAccount toAccount = accountRepository.findById(toAccountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        fromAccount.withdraw(amount);
+        toAccount.deposit(amount);
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
     }
 }
