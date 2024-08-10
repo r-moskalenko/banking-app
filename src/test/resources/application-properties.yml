@@ -1,0 +1,6 @@
+#Spring Boot
+spring:
+  datasource:
+    username: user
+    password:  admin
+    url: jdbc:postgresql://localhost:54320/postgres
