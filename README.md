@@ -19,9 +19,9 @@ The following programs must be installed on your computer:
 To run app locally you need to run following commands in the terminal:
 
 1. `docker compose -f docker/docker-compose.yml up -d`
-2. `./gradlew bootRun`
+2. `./gradlew bootRun` (for Windows use `./gradlew.bat bootRun`)
 3. visit swagger page http://localhost:8080/swagger-ui/index.html
-4. to run automated tests use `./gradlew clean test --info`
+4. to run automated tests use `./gradlew clean test --info` (for Windows use `./gradlew.bat clean test --info`)
 
 
 
