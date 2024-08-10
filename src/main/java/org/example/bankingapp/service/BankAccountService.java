@@ -2,6 +2,9 @@ package org.example.bankingapp.service;
 
 import org.example.bankingapp.domain.BankAccount;
 import org.example.bankingapp.dto.TransferDto;
+import org.example.bankingapp.exception.AccountNotFoundException;
+import org.example.bankingapp.exception.InsufficientFundsException;
+import org.example.bankingapp.exception.InvalidAmountException;
 import org.example.bankingapp.repository.BankAccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class BankAccountService {
     }
 
     public BankAccount createAccount(String ownerName, BigDecimal initialBalance) {
+        if (initialBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidAmountException("Cannot create account", initialBalance, " cannot be negative");
+        }
         BankAccount account = new BankAccount();
         account.setOwnerName(ownerName);
         account.setBalance(initialBalance);
@@ -34,15 +40,24 @@ public class BankAccountService {
     }
 
     public void deposit(Long accountId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException("Cannot deposit", amount, " should be positive");
+        }
         BankAccount account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
         account.deposit(amount);
         accountRepository.save(account);
     }
 
     public void withdraw(Long accountId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException("Cannot withdraw", amount, " should be positive");
+        }
         BankAccount account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException(amount, account.getBalance());
+        }
         account.withdraw(amount);
         accountRepository.save(account);
     }
@@ -55,11 +70,17 @@ public class BankAccountService {
         Long fromAccountId = transferDto.getFromAccountId();
         Long toAccountId = transferDto.getToAccountId();
         BigDecimal amount = transferDto.getAmount();
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException("Cannot transfer", amount, " should be positive");
+        }
         BankAccount fromAccount = accountRepository.findById(fromAccountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFoundException(fromAccountId));
         BankAccount toAccount = accountRepository.findById(toAccountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFoundException(toAccountId));
 
+        if (fromAccount.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException(amount, fromAccount.getBalance());
+        }
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
 
